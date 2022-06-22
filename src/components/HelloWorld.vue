@@ -1,4 +1,5 @@
 <script  lang="ts">
+//@ts-nocheck
 import { defineComponent, ref } from "vue";
 import * as moment from "moment";
 import * as THREE from "three";
