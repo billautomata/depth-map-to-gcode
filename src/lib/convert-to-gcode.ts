@@ -112,7 +112,7 @@ export default function (callback: Function, options: any, info: any) {
     //   "seconds"
     // );
     // info.cutting.time = `${duration.hours()} hours, ${duration.minutes()} minutes, ${duration.seconds()} seconds`
-    info.cutting.time = convert_to_hms(info.cutting.distance_mm / options.feed_rate)
+    info.cutting.time = convert_to_hms((info.cutting.distance_mm/100) / (options.feed_rate/60))
     return lines.join('\n')
   }
 }
@@ -121,8 +121,6 @@ function convert_to_hms(v: number) {
   let seconds = v
   const hours = Math.floor(seconds / 3600)
   seconds -= hours * 3600
-  if (hours > 0) {
-  }
   const minutes = Math.floor(seconds / 60)
   seconds -= minutes * 60
   return `${hours.toFixed(0)}h ${minutes.toFixed(0)}m ${seconds.toFixed(0)}s`
