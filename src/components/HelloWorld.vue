@@ -21,9 +21,9 @@ export default defineComponent({
       msg: "foo",
       isGenerating: false,
       options: {
-        px_to_mm: 0.15,
+        px_to_mm: 0.125,
         skipX: 8,
-        skipY: 1,
+        skipY: 2,
         depth_mm: 10,
         plunge_rate: 50,
         feed_rate: 100,

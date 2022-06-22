@@ -67,7 +67,7 @@ export default function (callback: Function, options: any, info: any) {
     const pos = d3.scaleLinear().domain([0, width]).range([0, width * px_to_mm])
 
     let xPos = 0
-    let yPos = -1
+    let yPos = -skipY
     let yDirection = skipY
 
     let v = 0
@@ -107,11 +107,11 @@ export default function (callback: Function, options: any, info: any) {
     console.log('distanceTraveled', distanceTraveled)
     info.cutting.distance_mm = distanceTraveled
 
-    const t = moment.duration(
+    const duration = moment.duration(
       info.cutting.distance_mm / options.feed_rate,
       "seconds"
     );
-    info.cutting.time = `${t.hours()} hours, ${t.minutes()} minutes, ${t.seconds()} seconds`
+    info.cutting.time = `${duration.hours()} hours, ${duration.minutes()} minutes, ${duration.seconds()} seconds`
 
     return lines.join('\n')
   }
