@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GCodeLoader } from "three/examples/jsm/loaders/GCodeLoader.js";
 import convert from "../lib/convert-to-gcode";
-import * as FileSaver from 'file-saver'
+import * as FileSaver from "file-saver";
 
 const loader = new GCodeLoader();
 const threeObjects = {
@@ -41,7 +41,7 @@ export default defineComponent({
         dimensions: { x: 0, y: 0 },
         cutting: { distance_mm: 0 },
         lines: [],
-        bytes: { value: 0 }
+        bytes: { value: 0 },
       },
     };
   },
@@ -93,11 +93,16 @@ export default defineComponent({
   },
   methods: {
     save_gcode: function () {
-      const self = this
+      const self = this;
       console.log("save gcode");
-      console.log(self.info.lines.join('\n').length);
-      var blob = new Blob([self.info.lines.join('\n')], {type: "text/plain;charset=utf-8"});
-      FileSaver.saveAs(blob, `gcode_${Date().split(' ').slice(0,5).join('_')}.gcode`);
+      console.log(self.info.lines.join("\n").length);
+      var blob = new Blob([self.info.lines.join("\n")], {
+        type: "text/plain;charset=utf-8",
+      });
+      FileSaver.saveAs(
+        blob,
+        `gcode_${Date().split(" ").slice(0, 5).join("_")}.gcode`
+      );
     },
     options_keys: function () {
       console.log(Object.keys(this.options));
@@ -159,16 +164,16 @@ export default defineComponent({
       <button v-if="!isGenerating" @click="do_conversion()">Generate</button>
       <div v-else>Generating...</div>
     </div>
-    <div  v-if="!isGenerating">
+    <div v-if="!isGenerating">
       <h4>Info</h4>
-      <p>{{info.px.x}}px by {{info.px.y}}px</p>
+      <p>{{ info.px.x }}px by {{ info.px.y }}px</p>
       <p>{{ info.dimensions.x }}mm by {{ info.dimensions.y }}mm</p>
       <p>{{ info.cutting.distance_mm.toFixed(0) }}mm of travel.</p>
-      <p>{{ cutting_time() }}.</p>
+      <p>{{ this.cutting_time }}.</p>
     </div>
-    <div  v-if="!isGenerating">
+    <div v-if="!isGenerating">
       <button @click="save_gcode">Save GCode</button>
-      <p>{{(info.bytes.value / (1000 * 1000)).toFixed(2)}} MB</p>
+      <p>{{ (info.bytes.value / (1000 * 1000)).toFixed(2) }} MB</p>
     </div>
   </div>
 </template>
