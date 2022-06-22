@@ -21,7 +21,7 @@ export default defineComponent({
       msg: "foo",
       isGenerating: false,
       options: {
-        px_to_mm: 0.1,
+        px_to_mm: 0.15,
         skipX: 8,
         skipY: 1,
         depth_mm: 10,
