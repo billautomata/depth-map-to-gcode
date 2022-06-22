@@ -46,15 +46,15 @@ export default function (callback: Function, options: any, info: any) {
     lines.push(`F${options.plunge_rate}`)
 
     let distanceTraveled = 0
-    const runningVector = new Vector3(0,0,0)
-    const compareVector = new Vector3(0,0,0)
+    const runningVector = new Vector3(0, 0, 0)
+    const compareVector = new Vector3(0, 0, 0)
 
     function moveTo(x: number, y: number, z: number, fastOrSlow: boolean) {
       // console.log(x, y, z)
-      compareVector.set(x,y,z)
+      compareVector.set(x, y, z)
       distanceTraveled += runningVector.distanceTo(compareVector)
       // console.log(distanceTraveled)
-      runningVector.set(x,y,z)
+      runningVector.set(x, y, z)
       lines.push([fastOrSlow ? 'G1' : 'G0', `X${x.toFixed(4)}`, `Y${y.toFixed(4)}`, `Z${z.toFixed(4)}`].join(' '))
     }
 
@@ -97,8 +97,8 @@ export default function (callback: Function, options: any, info: any) {
     console.log('lines length', lines.length)
     console.log(info)
     info.lines.length = 0
-    lines.forEach((line,lineIdx)=>{
-      if(lineIdx === 2){
+    lines.forEach((line, lineIdx) => {
+      if (lineIdx === 2) {
         info.lines.push(`F${options.feed_rate}`)
       }
       info.lines.push(line)
@@ -112,7 +112,18 @@ export default function (callback: Function, options: any, info: any) {
     //   "seconds"
     // );
     // info.cutting.time = `${duration.hours()} hours, ${duration.minutes()} minutes, ${duration.seconds()} seconds`
-    info.cutting.time = 'foo'
+    info.cutting.time = convert_to_hms(info.cutting.distance_mm / options.feed_rate)
     return lines.join('\n')
   }
+}
+
+function convert_to_hms(v: number) {
+  let seconds = v
+  const hours = Math.floor(seconds / 3600)
+  seconds -= hours * 3600
+  if (hours > 0) {
+  }
+  const minutes = Math.floor(seconds / 60)
+  seconds -= minutes * 60
+  return `${hours.toFixed(0)}hrs ${minutes.toFixed(0)}min ${seconds.toFixed(0)} sec`
 }

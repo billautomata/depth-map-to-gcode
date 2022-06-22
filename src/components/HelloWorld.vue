@@ -21,7 +21,7 @@ export default defineComponent({
       msg: "foo",
       isGenerating: false,
       options: {
-        px_to_mm: 0.125,
+        px_to_mm: 0.33,
         skipX: 8,
         skipY: 2,
         depth_mm: 10,
@@ -161,8 +161,8 @@ export default defineComponent({
       <h4>Info</h4>
       <p>{{ info.px.x }}px by {{ info.px.y }}px</p>
       <p>{{ info.dimensions.x }}mm by {{ info.dimensions.y }}mm</p>
-      <p>{{ info.cutting.distance_mm.toFixed(0) }}mm of travel.</p>
-      <p>{{ info.cutting.time }}.</p>
+      <p>{{ info.cutting.distance_mm.toFixed(0) }}mm of travel</p>
+      <p>{{ info.cutting.time }}</p>
     </div>
     <div v-if="!isGenerating">
       <button @click="save_gcode">Save GCode</button>
