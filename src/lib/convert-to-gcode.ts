@@ -125,5 +125,5 @@ function convert_to_hms(v: number) {
   }
   const minutes = Math.floor(seconds / 60)
   seconds -= minutes * 60
-  return `${hours.toFixed(0)}hrs ${minutes.toFixed(0)}min ${seconds.toFixed(0)} sec`
+  return `${hours.toFixed(0)}h ${minutes.toFixed(0)}m ${seconds.toFixed(0)}s`
 }
