@@ -161,7 +161,7 @@ export default defineComponent({
       </div>
     </div>
     <div class="spacing-buttons">
-      <button v-if="!isGenerating" @click="do_conversion()">Generate</button>
+      <button v-if="!isGenerating" @click="do_conversion">Generate</button>
       <div v-else>Generating...</div>
     </div>
     <div v-if="!isGenerating">
@@ -169,7 +169,7 @@ export default defineComponent({
       <p>{{ info.px.x }}px by {{ info.px.y }}px</p>
       <p>{{ info.dimensions.x }}mm by {{ info.dimensions.y }}mm</p>
       <p>{{ info.cutting.distance_mm.toFixed(0) }}mm of travel.</p>
-      <p>{{ this.cutting_time }}.</p>
+      <p>{{ this.cutting_time() }}.</p>
     </div>
     <div v-if="!isGenerating">
       <button @click="save_gcode">Save GCode</button>
