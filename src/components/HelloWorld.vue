@@ -39,7 +39,7 @@ export default defineComponent({
       info: {
         px: { x: 0, y: 0 },
         dimensions: { x: 0, y: 0 },
-        cutting: { distance_mm: 0 },
+        cutting: { distance_mm: 0, time: 0 },
         lines: [],
         bytes: { value: 0 },
       },
@@ -108,13 +108,6 @@ export default defineComponent({
       console.log(Object.keys(this.options));
       return Object.keys(this.options);
     },
-    cutting_time: function () {
-      const t = moment.duration(
-        this.info.cutting.distance_mm / this.options.feed_rate,
-        "seconds"
-      );
-      return `${t.hours()} hours, ${t.minutes()} minutes, ${t.seconds()} seconds`;
-    },
     do_conversion: function () {
       const self = this;
       self.isGenerating = true;
@@ -169,7 +162,7 @@ export default defineComponent({
       <p>{{ info.px.x }}px by {{ info.px.y }}px</p>
       <p>{{ info.dimensions.x }}mm by {{ info.dimensions.y }}mm</p>
       <p>{{ info.cutting.distance_mm.toFixed(0) }}mm of travel.</p>
-      <p>{{ cutting_time() }}.</p>
+      <p>{{ info.cutting.time }}.</p>
     </div>
     <div v-if="!isGenerating">
       <button @click="save_gcode">Save GCode</button>

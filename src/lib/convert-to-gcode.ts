@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
 import { Vector3 } from 'three'
+import * as moment from 'moment'
 
 export default function (callback: Function, options: any, info: any) {
   getPixels('./1to1-section.png', (err: any, pixels: any) => {
@@ -105,6 +106,12 @@ export default function (callback: Function, options: any, info: any) {
     info.bytes.value = info.lines.join('\n').length
     console.log('distanceTraveled', distanceTraveled)
     info.cutting.distance_mm = distanceTraveled
+
+    const t = moment.duration(
+      info.cutting.distance_mm / options.feed_rate,
+      "seconds"
+    );
+    info.cutting.time = `${t.hours()} hours, ${t.minutes()} minutes, ${t.seconds()} seconds`
 
     return lines.join('\n')
   }
