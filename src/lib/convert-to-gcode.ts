@@ -61,10 +61,10 @@ export default function (callback: Function, options: any, info: any) {
     const skipX = options.skipX
     const skipY = options.skipY
 
-    const depth_mm = options.depth_mm
-    const px_to_mm = options.px_to_mm
-    const scaleDepth = d3.scaleLinear().domain([0, 255]).range([-depth_mm, 0])
-    const pos = d3.scaleLinear().domain([0, width]).range([0, width * px_to_mm])
+    // const depth_mm = options.depth_mm
+    // const px_to_mm = options.px_to_mm
+    const scaleDepth = d3.scaleLinear().domain([0, 255]).range([-options.depth_mm, 0])
+    const pos = d3.scaleLinear().domain([0, width]).range([0, width * options.px_to_mm])
 
     let xPos = 0
     let yPos = -skipY
