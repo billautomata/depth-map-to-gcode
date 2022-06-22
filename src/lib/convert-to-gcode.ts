@@ -107,12 +107,12 @@ export default function (callback: Function, options: any, info: any) {
     console.log('distanceTraveled', distanceTraveled)
     info.cutting.distance_mm = distanceTraveled
 
-    const duration = moment.duration(
-      info.cutting.distance_mm / options.feed_rate,
-      "seconds"
-    );
-    info.cutting.time = `${duration.hours()} hours, ${duration.minutes()} minutes, ${duration.seconds()} seconds`
-
+    // const duration = moment.duration(
+    //   info.cutting.distance_mm / options.feed_rate,
+    //   "seconds"
+    // );
+    // info.cutting.time = `${duration.hours()} hours, ${duration.minutes()} minutes, ${duration.seconds()} seconds`
+    info.cutting.time = 'foo'
     return lines.join('\n')
   }
 }
