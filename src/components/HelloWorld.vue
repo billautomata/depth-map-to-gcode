@@ -23,12 +23,12 @@ export default defineComponent({
       options: {
         px_to_mm: 0.303,
         skipX: 8,
-        skipY: 8,
-        depth_mm: 10,
-        plunge_rate: 50,
-        feed_rate: 100,
-        tool_width_mm: 2,
-        tool_angle_deg: 30
+        skipY: 2,
+        depth_mm: 7.5,
+        plunge_rate: 5,
+        feed_rate: 10,
+        tool_width_mm: 6.35,
+        tool_angle_deg: 45
       },
       step: {
         skipX: 1,
