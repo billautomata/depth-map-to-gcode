@@ -23,7 +23,7 @@ export default defineComponent({
       options: {
         px_to_mm: 0.303,
         skipX: 8,
-        skipY: 2,
+        skipY: 4,
         depth_mm: 7.5,
         plunge_rate: 5,
         feed_rate: 10,
