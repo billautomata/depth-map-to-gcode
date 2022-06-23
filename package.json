@@ -10,10 +10,12 @@
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
+    "@types/async": "^3.2.13",
     "@types/d3": "^7.4.0",
     "@types/dropzone": "^5.7.4",
     "@types/file-saver": "^2.0.5",
     "@types/three": "^0.141.0",
+    "async": "^3.2.4",
     "d3": "^7.4.4",
     "dropzone": "^6.0.0-beta.2",
     "file-save": "^0.2.0",

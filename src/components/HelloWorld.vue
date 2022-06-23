@@ -21,12 +21,14 @@ export default defineComponent({
       msg: "foo",
       isGenerating: false,
       options: {
-        px_to_mm: 0.1,
+        px_to_mm: 0.303,
         skipX: 8,
-        skipY: 2,
+        skipY: 8,
         depth_mm: 10,
         plunge_rate: 50,
         feed_rate: 100,
+        tool_width_mm: 2,
+        tool_angle_deg: 30
       },
       step: {
         skipX: 1,
@@ -42,6 +44,7 @@ export default defineComponent({
         cutting: { distance_mm: 0, time: 0 },
         lines: [],
         bytes: { value: 0 },
+        bit: { overlap: 0, backoff: 0 }
       },
     };
   },
@@ -101,7 +104,7 @@ export default defineComponent({
       });
       FileSaver.saveAs(
         blob,
-        `gcode_${Date().split(" ").slice(0, 5).join("_")}.gcode`
+        `gcode_${Date().split(" ").slice(0, 5).join("_")}.nc`
       );
     },
     options_keys: function () {
@@ -163,6 +166,8 @@ export default defineComponent({
       <p>{{ info.dimensions.x }}mm by {{ info.dimensions.y }}mm</p>
       <p>{{ info.cutting.distance_mm.toFixed(0) }}mm of travel</p>
       <p>{{ info.cutting.time }}</p>
+      <p>Overlap {{ info.bit.overlap.toFixed(2) }}%</p>
+      <p>Backoff Score: {{ info.bit.backoff.toFixed(2) }} (lower is better)</p>
     </div>
     <div v-if="!isGenerating">
       <button @click="save_gcode">Save GCode</button>
@@ -175,15 +180,16 @@ export default defineComponent({
 .ui {
   display: flex;
   position: fixed;
-  top: 2px;
-  left: 2px;
+  top: 5px;
+  left: 6px;
   z-index: 32;
-  padding: 16px 24px;
+  padding: 8px 4px 0px 8px;
   background-color: #fff;
   flex-wrap: wrap;
   flex-direction: column;
   font-family: monospace;
   max-width: 192px;
+  border-radius: 3px;
 }
 .ui-element {
   display: flex;
