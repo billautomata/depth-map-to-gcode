@@ -27,7 +27,7 @@ export default defineComponent({
         depth_mm: 7.5,
         plunge_rate: 5,
         feed_rate: 10,
-        tool_width_mm: 6.35,
+        tool_width_mm: 2,
         tool_angle_deg: 45
       },
       step: {
@@ -44,7 +44,8 @@ export default defineComponent({
         cutting: { distance_mm: 0, time: 0 },
         lines: [],
         bytes: { value: 0 },
-        bit: { overlap: 0, backoff: 0 }
+        bit: { overlap: 0, backoff: 0 },
+        process: { percent_complete: 0 }
       },
     };
   },
@@ -108,7 +109,7 @@ export default defineComponent({
       );
     },
     options_keys: function () {
-      console.log(Object.keys(this.options));
+      // console.log(Object.keys(this.options));
       return Object.keys(this.options);
     },
     do_conversion: function () {
@@ -151,14 +152,22 @@ export default defineComponent({
       v-bind:key="`option${idx}`"
       class="ui-element"
     >
-      <div>{{ option }}</div>
+      <div class="ui-element-name">{{ option }}</div>
       <div>
-        <input type="number" v-model="options[option]" :step="step[option]" />
+        <input type="number" v-model="options[option]" :step="step[option]" v-if="option !=='tool_angle_deg'"/>
+        <select v-else v-model="options[option]">
+          <option value="30">30</option>
+          <option value="45">45</option>
+          <option value="60">60</option>
+          <option value="75">75</option>
+          <option value="90">90</option>
+        </select>
+
       </div>
     </div>
     <div class="spacing-buttons">
       <button v-if="!isGenerating" @click="do_conversion">Generate</button>
-      <div v-else>Generating...</div>
+      <p v-else>Generating... {{info.process.percent_complete}}</p>
     </div>
     <div v-if="!isGenerating">
       <h4>Info</h4>
@@ -196,11 +205,21 @@ export default defineComponent({
   flex: 4;
   width: 192px;
   justify-content: space-between;
+  align-items: center;
+}
+.ui-element-name {
+  flex: 2;
+  margin-right: 6px;
+  text-align: right;
 }
 .spacing-buttons {
-  margin: 4px 0px 0px;
+  margin: 12px 0px 0px;
 }
 input {
   width: 64px;
+}
+select {
+  width: 72px;
+  height: 22px;
 }
 </style>

@@ -1,8 +1,9 @@
 import * as d3 from 'd3'
 import { Vector3 } from 'three'
-import * as moment from 'moment'
-import { hasData } from 'jquery'
+// import * as moment from 'moment'
+// import { hasData } from 'jquery'
 import * as async from 'async'
+import * as isOdd from 'is-odd'
 
 const angleDistanceMultiplier = new Map<number, number>()
 angleDistanceMultiplier.set(30, Math.sqrt(3))
@@ -98,15 +99,15 @@ export default function (callback: Function, options: any, info: any) {
     let cummulativeBackOff = 0
 
     const fns = []
-    fns.push((done:Function)=>{
+    fns.push((done: Function) => {
       console.log('starting system')
       done()
     })
 
     const xPositionsToCheck = Math.floor(width / skipX)
 
-    for(let i = 0; i < xPositionsToCheck; i++) {
-      fns.push((done:Function)=>{
+    for (let i = 0; i < xPositionsToCheck; i++) {
+      fns.push((done: Function) => {
         if (yDirection > 0) {
           while (yPos < height - skipY) {
             yPos += yDirection
@@ -120,50 +121,39 @@ export default function (callback: Function, options: any, info: any) {
         }
         yDirection = yDirection > 0 ? -skipY : skipY
         xPos += skipX
-        console.log(((xPos / width)*100).toFixed(1)+'% complete')
-        done()
-      })      
+        info.process.percent_complete = ((xPos / width) * 100).toFixed(1) + '%'
+        // console.log(info.process.percent_complete)
+        // done()
+        setTimeout(done, 0)
+      })
     }
 
-    // while (xPos < width) {
-    //   if (yDirection > 0) {
-    //     while (yPos < height - skipY) {
-    //       yPos += yDirection
-    //       testPoint(xPos, yPos)
-    //     }
-    //   } else {
-    //     while (yPos > skipY) {
-    //       yPos += yDirection
-    //       testPoint(xPos, yPos)
-    //     }
-    //   }
-    //   yDirection = yDirection > 0 ? -skipY : skipY
-    //   xPos += skipX
-    // }
+    fns.push((done:Function)=>{
+      lines.push('M5')
+      lines.push('G17 G54 G40 G49 G80 G90')
+      lines.push('M2')
+  
+      console.log('lines length', lines.length)
+      info.lines.length = 0
+      lines.forEach((line, lineIdx) => {
+        if (lineIdx === 3 + Object.keys(options).length + 2) {
+          info.lines.push(`F${options.feed_rate}`)
+        }
+        info.lines.push(line)
+      })
+      info.bytes.value = info.lines.join('\n').length
+      console.log('distanceTraveled', distanceTraveled)
+      console.log('cumulativebackoff', cummulativeBackOff)
+      info.cutting.distance_mm = distanceTraveled
+      info.cutting.time = convert_to_hms((info.cutting.distance_mm / 100) / (options.feed_rate / 60))
+      info.bit.backoff = cummulativeBackOff / info.lines.length
+      info.bit.overlap = (((options.tool_width_mm / 2) - (options.px_to_mm * skipX)) / (options.tool_width_mm / 2)) * 100
+  
+      callback(lines.join('\n'))
+      done()
+    })
 
     async.series(fns)
-
-    lines.push('M5')
-    lines.push('G17 G54 G40 G49 G80 G90')
-    lines.push('M2')
-
-    console.log('lines length', lines.length)
-    info.lines.length = 0
-    lines.forEach((line, lineIdx) => {
-      if (lineIdx === 3 + Object.keys(options).length + 2) {
-        info.lines.push(`F${options.feed_rate}`)
-      }
-      info.lines.push(line)
-    })
-    info.bytes.value = info.lines.join('\n').length
-    console.log('distanceTraveled', distanceTraveled)
-    console.log('cumulativebackoff', cummulativeBackOff)
-    info.cutting.distance_mm = distanceTraveled
-    info.cutting.time = convert_to_hms((info.cutting.distance_mm / 100) / (options.feed_rate / 60))
-    info.bit.backoff = cummulativeBackOff / info.lines.length
-    info.bit.overlap = (((options.tool_width_mm/2) - (options.px_to_mm * skipX)) / (options.tool_width_mm/2)) * 100
-
-    callback(lines.join('\n'))
 
     function testPoint(x: number, y: number) {
       i = (x * height) + y
@@ -185,21 +175,15 @@ export default function (callback: Function, options: any, info: any) {
         for (let j = 0; j < searchMatrix[i].length; j++) {
           testOffsetY = (j - searchMatrixIdxOffset) + y
           offsetCompareSample = searchMatrix[i][j]
-          // console.log(offsetCompareSample)
-
           if (offsetCompareSample !== -1) {
             testSampleIdx = (testOffsetX * height) + testOffsetY
-            // console.log(testSampleIdx)
             if (checkBounds(testOffsetX, testOffsetY, info.px.x, info.px.y)) {   // check to see if the search is within the bounds of the image
               testSample = pixels[testSampleIdx]
               if (v + offsetCompareSample > testSample) {
                 // win
               } else {
                 // FAIL
-                // console.log('here', testSample, v, offsetCompareSample)
                 backoffValue = testSample - (v + offsetCompareSample)
-                if (testSample - (v + offsetCompareSample) > backoffValue) {
-                }
               }
             } else {
               // out of bounds, don't check
@@ -208,7 +192,7 @@ export default function (callback: Function, options: any, info: any) {
         }
       }
       cummulativeBackOff += backoffValue
-      if(x === 0 && y === 0) console.log('first backoff value', backoffValue)
+      if (x === 0 && y === 0) console.log('first backoff value', backoffValue)
       moveTo(pos(x), pos(y), scaleDepth(v) - scaleDepth(255 - backoffValue), true)
     }
 
@@ -222,8 +206,9 @@ export default function (callback: Function, options: any, info: any) {
     }
 
     function generate_tool_depths(searchSpace: number): number[][] {
-      const matrix = new Array(searchSpace + 1).fill(0).map((o, i) => { return new Array(searchSpace + 1).fill(0) })
-      const centerIdx = Math.floor((searchSpace + 1) / 2)
+      const nudge = isOdd(searchSpace) ? 0 : 1
+      const matrix = new Array(searchSpace + nudge).fill(0).map((o, i) => { return new Array(searchSpace + nudge).fill(0) })
+      const centerIdx = Math.floor((searchSpace + nudge) / 2)
       const centerPoint = new Vector3(0, 0, 0)
       const testPoint = new Vector3(0, 0, 0)
       matrix.forEach((row: number[], row_idx: number) => {
@@ -234,7 +219,7 @@ export default function (callback: Function, options: any, info: any) {
           if (testPoint.length() > options.tool_width_mm / 2) {
             col = -1
           } else {
-            col = Math.floor(scaleDepth.invert(testPoint.length() * angleDistanceMultiplier.get(options.tool_angle_deg))) - 255
+            col = Math.floor(scaleDepth.invert(testPoint.length() * angleDistanceMultiplier.get(Number(options.tool_angle_deg)))) - 255
           }
           matrix[row_idx][col_idx] = col
         })
@@ -246,5 +231,5 @@ export default function (callback: Function, options: any, info: any) {
 }
 
 function checkBounds(x: number, y: number, w: number, h: number): boolean {
-  return (x >= 0) && (x < w-1) && (y > 0) && (y < h-1)
+  return (x >= 0) && (x < w - 1) && (y > 0) && (y < h - 1)
 }
